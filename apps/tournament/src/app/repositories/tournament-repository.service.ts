@@ -12,4 +12,13 @@ export class TournamentRepositoryService {
   public getTournament(tournamentId: string): Tournament {
     return this.tournaments.get(tournamentId);
   }
+
+  public getTournamentByName(name: string): boolean {
+    for (const [id, tournament] of this.tournaments) { 
+      if (tournament.name.toLowerCase() === name.toLowerCase()) { 
+        return true;
+      }
+    }
+    return false;
+  }
 }

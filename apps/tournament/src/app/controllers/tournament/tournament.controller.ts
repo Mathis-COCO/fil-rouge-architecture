@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ConflictException, Controller, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Tournament, TournamentToAdd } from '../../api-model';
 import { v4 as uuidv4 } from 'uuid';
 import { TournamentRepositoryService } from '../../repositories/tournament-repository.service';
@@ -12,13 +12,11 @@ export class TournamentController {
     id: string;
   } {
     if (!tournamentToAdd.name || tournamentToAdd.name.trim() === '') {
-      throw new BadRequestException(`Le champ name n'a pas été renseigné`);
+      throw new BadRequestException(`Le champ nom n'a pas été renseigné.`);
     }
     const existingTournament = this.tournamentRepository.getTournamentByName(tournamentToAdd.name);
-    console.log("existingTournament", existingTournament)
-
     if (existingTournament) {
-      throw new ConflictException(`Tournament avec ${tournamentToAdd.name} existe déjà`);
+      throw new BadRequestException(`Tournoi ${tournamentToAdd.name} déjà existant.`);
     }
 
     const tournament = {
@@ -34,6 +32,10 @@ export class TournamentController {
 
   @Get(':id')
   public getTournament(@Param('id') id: string): Tournament {
-    return this.tournamentRepository.getTournament(id);
+    if (this.tournamentRepository.getTournament(id)) {
+      throw new BadRequestException("Le tournoi n'existe pas");
+    } else {
+      return this.tournamentRepository.getTournament(id);
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Tournament } from '../api-model';
+import { Participant, Tournament } from '../api-model';
 
 @Injectable()
 export class TournamentRepositoryService {
@@ -23,5 +23,16 @@ export class TournamentRepositoryService {
       }
     }
     return undefined;
+  }
+  
+  public participantExists(participant: Participant): boolean {
+    for (const tournament of this.tournaments.values()) {
+      for (const currentParticipant of tournament.participants) {
+        if (currentParticipant.name === participant.name) { 
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

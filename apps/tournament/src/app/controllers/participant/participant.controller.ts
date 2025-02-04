@@ -11,7 +11,7 @@ export class ParticipantController {
   public createParticipant(@Body() participantToAdd: Participant): { id: string; } {
     // Le nom de participant est invalide
     if ((!participantToAdd.name || participantToAdd.name.trim() === '') ||
-        (!participantToAdd.elo || participantToAdd.elo)) { // TODO: check que elo est bien entier
+        (!participantToAdd.elo || participantToAdd.elo % 1 !== 0)) { // TODO: check que elo est bien entier
       throw new BadRequestException('Nom du participant ou ELO invalide.');
     }
     // Le nom de participant existe déjà
@@ -25,7 +25,7 @@ export class ParticipantController {
     const participant = {
       id: uuidv4(),
       name: participantToAdd.name,
-      elo: 0
+      elo: participantToAdd.elo
     };
     this.participantRepository.saveParticipant(participant);
 

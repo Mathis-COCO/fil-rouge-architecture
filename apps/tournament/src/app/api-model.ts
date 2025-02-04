@@ -3,6 +3,11 @@ export enum TournamentPhaseType {
   SwissRound = 'SwissRound',
 }
 
+export enum StatusType {
+  Started = 'Started',
+  NotStarted = 'NotStarted',
+}
+
 export interface TournamentPhase {
   type: TournamentPhaseType;
 }
@@ -23,6 +28,7 @@ export interface Tournament {
   name: string;
   maxParticipants: number;
   currentParticipantNb: number;
+  status?: StatusType,
   phases: TournamentPhase[];
   participants: Participant[];
 }

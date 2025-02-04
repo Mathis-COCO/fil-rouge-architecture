@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Participant, Tournament, TournamentToAdd } from '../api-model';
+import { Participant, StatusType, Tournament, TournamentToAdd } from '../api-model';
 import { ParticipantRepositoryService } from './participant-repository.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,11 +19,12 @@ export class TournamentRepositoryService {
       throw new BadRequestException(`Tournoi ${tournamentToAdd.name} déjà existant.`);
     }
 
-    const tournament = {
+    const tournament: Tournament = {
       id: uuidv4(),
       name: tournamentToAdd.name,
       maxParticipants: tournamentToAdd.maxParticipants,
       currentParticipantNb: 0,
+      status: StatusType.NotStarted,
       phases: [],
       participants: [],
     };

@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { Participant, Tournament, TournamentPhase, TournamentPhaseType, TournamentToAdd } from '../../api-model';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Participant, StatusType, Tournament, TournamentPhase, TournamentPhaseType, TournamentToAdd } from '../../api-model';
 import { TournamentRepositoryService } from '../../repositories/tournament-repository.service';
 
 @Controller('tournaments')
@@ -92,6 +92,13 @@ export class TournamentController {
     } else {
       return this.tournamentRepository.getTournamentParticipants(id);
     }
+  }
+
+  @Patch(':id')
+  public startTournament(@Param('id') id: string) {
+    const tournament = this.getTournament(id);
+    tournament.status = StatusType.Started;
+    this.tournamentRepository.saveTournament(tournament);
   }
 
   @Delete(':id/participants/:participantId')

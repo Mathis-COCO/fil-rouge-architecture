@@ -1,6 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { Participant, Tournament, TournamentPhase, TournamentPhaseType, TournamentToAdd } from '../../api-model';
-import { v4 as uuidv4 } from 'uuid';
 import { TournamentRepositoryService } from '../../repositories/tournament-repository.service';
 
 @Controller('tournaments')
@@ -31,6 +30,9 @@ export class TournamentController {
       throw new BadRequestException(`Tournament with ID ${tournamentId} not found.`);
     }
 
+    if (tournament.participants.length === tournament.maxPool) {
+      throw new BadRequestException(`Le tournoi est complet.`);
+    }
     tournament.participants = tournament.participants || [];
     tournament.participants.push(participant);
     this.tournamentRepository.saveTournament(tournament);

@@ -15,12 +15,13 @@ export interface Participant {
 
 export interface TournamentToAdd {
   name: string;
+  maxPool: number;
 }
 
 export interface Tournament {
   id: string;
   name: string;
-
+  maxPool: number;
   phases: TournamentPhase[];
   participants: Participant[];
 }

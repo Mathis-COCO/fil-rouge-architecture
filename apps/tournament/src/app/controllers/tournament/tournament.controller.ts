@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { Participant, Tournament, TournamentToAdd } from '../../api-model';
+import { Participant, Tournament, TournamentPhase, TournamentPhaseType, TournamentToAdd } from '../../api-model';
 import { v4 as uuidv4 } from 'uuid';
 import { TournamentRepositoryService } from '../../repositories/tournament-repository.service';
 
@@ -8,34 +8,16 @@ export class TournamentController {
   constructor(private tournamentRepository: TournamentRepositoryService) {}
 
   @Post()
-  public createTournament(@Body() tournamentToAdd: TournamentToAdd): {
-    id: string;
-  } {
-    if (!tournamentToAdd.name || tournamentToAdd.name.trim() === '') {
-      throw new BadRequestException(`Le champ nom n'a pas été renseigné.`);
-    }
-    const existingTournament = this.tournamentRepository.getTournamentByName(tournamentToAdd.name);
-    if (existingTournament) {
-      throw new BadRequestException(`Tournoi ${tournamentToAdd.name} déjà existant.`);
-    }
+  public createTournament(@Body() tournamentToAdd: TournamentToAdd): { id: string; } {
+    const createdTournament = this.tournamentRepository.addTournament(tournamentToAdd)
+    return { id: createdTournament.id };
 
-    const tournament = {
-      id: uuidv4(),
-      name: tournamentToAdd.name,
-      phases: [],
-      participants: [],
-    };
-    this.tournamentRepository.saveTournament(tournament);
-
-    return { id: tournament.id };
   }
 
   @Post(':id/participants')
-  public addParticipantToTournament(
-    @Param('id') tournamentId: string,
-    @Body() participant: Participant): {
-    id: string;
-  } {
+  public addParticipantToTournament( @Param('id') tournamentId: string,
+                                     @Body() participant: Participant
+                                    ): { id: string } {
     if (!participant.name || participant.name.trim() === '' || !participant.elo) {
       throw new BadRequestException(`Le champ name et/ou elo est incorrect.`);
     }
@@ -51,6 +33,33 @@ export class TournamentController {
 
     tournament.participants = tournament.participants || [];
     tournament.participants.push(participant);
+    this.tournamentRepository.saveTournament(tournament);
+
+    return { id: tournament.id };
+  }
+
+  @Post(':id/phases')
+  public createPhase(@Param('id') id: string, @Body() phase: TournamentPhase): {
+    id: string;
+  } {
+    if (!phase) {
+      throw new BadRequestException(`La phase n'a pas été renseignée.`);
+    }
+    const tournament = this.tournamentRepository.getTournament(id);
+    if (!tournament) {
+      throw new BadRequestException(`Tournoi avec l'id ${id} inexistant.`);
+    }
+    if (!(phase.type in TournamentPhaseType)) {
+      throw new BadRequestException(`Type de phase invalide.`);
+    }
+    for(const currentPhase of tournament.phases) {
+      if (currentPhase.type === "SingleBracketElimination") {
+        throw new BadRequestException(`La phase SingleBracketElimination existe déjà et elle est finale.`);
+      }
+    }
+    
+    tournament.phases = tournament.phases || [];
+    tournament.phases.push(phase);
     this.tournamentRepository.saveTournament(tournament);
 
     return { id: tournament.id };

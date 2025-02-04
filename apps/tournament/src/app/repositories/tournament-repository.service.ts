@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { Participant, Tournament } from '../api-model';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Participant, Tournament, TournamentToAdd } from '../api-model';
 import { ParticipantRepositoryService } from './participant-repository.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class TournamentRepositoryService {
@@ -8,17 +9,35 @@ export class TournamentRepositoryService {
   
   private tournaments = new Map<string, Tournament>();
 
-  // Enregistre le tournoi
+  addTournament(tournamentToAdd: TournamentToAdd): Tournament {
+    
+    if (!tournamentToAdd.name || tournamentToAdd.name.trim() === '') {
+      throw new BadRequestException(`Le champ nom n'a pas été renseigné.`);
+    }
+    const existingTournament = this.getTournamentByName(tournamentToAdd.name);
+    if (existingTournament) {
+      throw new BadRequestException(`Tournoi ${tournamentToAdd.name} déjà existant.`);
+    }
+
+    const tournament = {
+      id: uuidv4(),
+      name: tournamentToAdd.name,
+      phases: [],
+      participants: [],
+    };
+    this.saveTournament(tournament);
+
+    return tournament;
+  }
+
   public saveTournament(tournament: Tournament): void {
     this.tournaments.set(tournament.id, tournament);
   }
 
-  // Récupère le tournoi par son ID
   public getTournament(tournamentId: string): Tournament {
     return this.tournaments.get(tournamentId);
   }
 
-  // Récupère le tournoi par nom 
   public getTournamentByName(name: string): Tournament | undefined {
     for (const tournament of this.tournaments.values()) { 
       if (tournament.name.toLowerCase() === name.toLowerCase()) { 
@@ -49,4 +68,6 @@ export class TournamentRepositoryService {
     }
     return false;
   }
+
+
 }

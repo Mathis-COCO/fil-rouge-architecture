@@ -95,9 +95,9 @@ export class TournamentController {
   }
 
   @Patch(':id')
-  public startTournament(@Param('id') id: string) {
+  public startTournament(@Param('id') id: string, @Body() body: { status: StatusType }) {
     const tournament = this.getTournament(id);
-    tournament.status = StatusType.Started;
+    tournament.status = body.status;
     this.tournamentRepository.saveTournament(tournament);
   }
 

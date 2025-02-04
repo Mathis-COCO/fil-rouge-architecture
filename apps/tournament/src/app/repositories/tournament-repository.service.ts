@@ -24,6 +24,11 @@ export class TournamentRepositoryService {
     }
     return undefined;
   }
+
+  public getTournamentParticipants(tournamentId: string): Participant[] {
+    const tournament = this.getTournament(tournamentId);
+    return tournament.participants;
+  }
   
   public participantExists(participant: Participant): boolean {
     for (const tournament of this.tournaments.values()) {

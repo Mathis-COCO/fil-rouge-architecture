@@ -40,7 +40,6 @@ export class TournamentController {
       throw new BadRequestException(`Le champ name et/ou elo est incorrect.`);
     }
     const existingParticipant = this.tournamentRepository.participantExists(participant);
-    console.log(existingParticipant)
     if (existingParticipant) {
       throw new BadRequestException(`Le participant ${participant.name} existe déjà.`);
     }
@@ -59,11 +58,25 @@ export class TournamentController {
 
   @Get(':id')
   public getTournament(@Param('id') id: string): Tournament {
-      console.log("passed")
     if (!this.tournamentRepository.getTournament(id)) {
       throw new BadRequestException("Le tournoi n'existe pas");
     } else {
       return this.tournamentRepository.getTournament(id);
+    }
+  }
+
+  @Get(':id/participants')
+  public getTournamentParticipants(@Param('id') id: string): Participant[] {
+
+    const tournament = this.tournamentRepository.getTournament(id); // Fetch the existing tournament
+    if (!tournament) {
+      throw new BadRequestException(`Tournament with ID ${id} not found.`);
+    }
+    
+    if (!this.tournamentRepository.getTournament(id)) {
+      throw new BadRequestException("Le tournoi n'existe pas");
+    } else {
+      return this.tournamentRepository.getTournamentParticipants(id);
     }
   }
 }

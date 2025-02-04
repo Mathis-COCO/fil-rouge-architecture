@@ -22,7 +22,8 @@ export class TournamentRepositoryService {
     const tournament = {
       id: uuidv4(),
       name: tournamentToAdd.name,
-      maxPool: tournamentToAdd.maxPool,
+      maxParticipants: tournamentToAdd.maxParticipants,
+      currentParticipantNb: 0,
       phases: [],
       participants: [],
     };

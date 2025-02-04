@@ -25,16 +25,19 @@ export class TournamentController {
       throw new BadRequestException(`Le participant ${participant.name} existe déjà.`);
     }
 
-    const tournament = this.tournamentRepository.getTournament(tournamentId); // Fetch the existing tournament
+    const tournament = this.tournamentRepository.getTournament(tournamentId);
     if (!tournament) {
       throw new BadRequestException(`Tournament with ID ${tournamentId} not found.`);
     }
 
-    if (tournament.participants.length === tournament.maxPool) {
+    console.log(tournament.participants.length)
+    console.log(tournament.maxParticipants)
+    if (tournament.participants.length === tournament.maxParticipants) {
       throw new BadRequestException(`Le tournoi est complet.`);
     }
     tournament.participants = tournament.participants || [];
     tournament.participants.push(participant);
+    tournament.currentParticipantNb = tournament.participants.length;
     this.tournamentRepository.saveTournament(tournament);
 
     return { id: tournament.id };

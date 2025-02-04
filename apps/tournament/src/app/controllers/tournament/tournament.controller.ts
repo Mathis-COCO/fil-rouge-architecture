@@ -57,7 +57,7 @@ export class TournamentController {
         throw new BadRequestException(`La phase SingleBracketElimination existe déjà et elle est finale.`);
       }
     }
-    
+     
     tournament.phases = tournament.phases || [];
     tournament.phases.push(phase);
     this.tournamentRepository.saveTournament(tournament);

@@ -35,8 +35,6 @@ export class TournamentRepositoryService {
 
   public deleteParticipantFromTournament(tournamentId: string, participantId: string) {
     const tournament = this.getTournament(tournamentId);
-    console.log("tournament list : " + tournament)
-    console.log("service list : " + this.participantRepository.getParticipantById(participantId))
     tournament.participants = tournament.participants.filter(participant => participant === this.participantRepository.getParticipantById(participantId));
     this.saveTournament(tournament);
   }

@@ -68,7 +68,7 @@ export class TournamentController {
   @Get(':id/participants')
   public getTournamentParticipants(@Param('id') id: string): Participant[] {
 
-    const tournament = this.tournamentRepository.getTournament(id); // Fetch the existing tournament
+    const tournament = this.tournamentRepository.getTournament(id);
     if (!tournament) {
       throw new BadRequestException(`Tournament with ID ${id} not found.`);
     }
@@ -83,8 +83,6 @@ export class TournamentController {
   @Delete(':id/participants/:participantId')
   public deleteTournamentParticipant(@Param('id') id: string, @Param('participantId') participantId: string)
   {
-    console.log("id " +id)
-    console.log("participantId " +participantId)
     this.tournamentRepository.deleteParticipantFromTournament(id, participantId);
   }
 }

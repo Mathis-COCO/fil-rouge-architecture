@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { Participant, Tournament, TournamentToAdd } from '../../api-model';
 import { v4 as uuidv4 } from 'uuid';
 import { TournamentRepositoryService } from '../../repositories/tournament-repository.service';
@@ -32,7 +32,7 @@ export class TournamentController {
 
   @Post(':id/participants')
   public addParticipantToTournament(
-    @Param('id') id: string,
+    @Param('id') tournamentId: string,
     @Body() participant: Participant): {
     id: string;
   } {
@@ -44,9 +44,9 @@ export class TournamentController {
       throw new BadRequestException(`Le participant ${participant.name} existe déjà.`);
     }
 
-    const tournament = this.tournamentRepository.getTournament(id); // Fetch the existing tournament
+    const tournament = this.tournamentRepository.getTournament(tournamentId); // Fetch the existing tournament
     if (!tournament) {
-      throw new BadRequestException(`Tournament with ID ${id} not found.`);
+      throw new BadRequestException(`Tournament with ID ${tournamentId} not found.`);
     }
 
     tournament.participants = tournament.participants || [];
@@ -72,11 +72,19 @@ export class TournamentController {
     if (!tournament) {
       throw new BadRequestException(`Tournament with ID ${id} not found.`);
     }
-    
+
     if (!this.tournamentRepository.getTournament(id)) {
       throw new BadRequestException("Le tournoi n'existe pas");
     } else {
       return this.tournamentRepository.getTournamentParticipants(id);
     }
+  }
+
+  @Delete(':id/participants/:participantId')
+  public deleteTournamentParticipant(@Param('id') id: string, @Param('participantId') participantId: string)
+  {
+    console.log("id " +id)
+    console.log("participantId " +participantId)
+    this.tournamentRepository.deleteParticipantFromTournament(id, participantId);
   }
 }

@@ -3,6 +3,8 @@ import { INestApplication } from '@nestjs/common';
 import { startApp } from './test.utils';
 import request from 'supertest';
 
+// ---------- CAS DE TESTS ---------- //
+
 // Cas de test participant
 const exampleParticipant1 = {
   name: "John Pork",
@@ -61,13 +63,14 @@ const exampleExistingTournament = {
   participants: participants,
 }
 
-// ----- CAS DE TESTS ----- //
+// ---------- TESTS UNITAIRES ---------- //
+
 describe('/tournament endpoint', () => {
   let app: INestApplication;
   beforeAll(async () => {
     app = await startApp();
   });
-  describe('[POST] when creating a tournament', () => { // virer ou généraliser description test (TBD)
+  describe('[POST] description à revoir', () => {
     // Vérifier ID tournoi
     it('should return the correct id', async () => {
       const { body } = await request(app.getHttpServer())

@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Tournament } from './tournament-entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+//import { Tournament } from './tournament-entity';
 import { TournamentPhaseType } from '../api-model';
 
 @Entity()
@@ -14,7 +14,7 @@ export class TournamentPhase {
   @Column()
   status: string;
 
-  @ManyToOne(() => Tournament, (tournament) => tournament.phases)
-  tournament: Tournament;
+  //@ManyToOne(() => Tournament, (tournament) => tournament.phases)
+  //tournament: Tournament;
 
 }

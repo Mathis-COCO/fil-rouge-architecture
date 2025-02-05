@@ -1,4 +1,4 @@
-import { TournamentToAdd, Participant, Tournament, TournamentPhase, TournamentPhaseType } from '../app/api-model';
+import { TournamentToAdd, Participant } from '../app/api-model';
 import { INestApplication } from '@nestjs/common';
 import { startApp } from './test.utils';
 import request from 'supertest';
@@ -52,7 +52,7 @@ const exampleTournament = {
 
 // Cas de test tournoi créé
 const exampleExistingTournament = {
-  id: "",
+  id: "", // TODO: corriger id 
   name: 'TestBis',
   maxParticipants: 2,
   currentParticipantNb: 2,
@@ -68,7 +68,6 @@ describe('/tournament endpoint', () => {
     app = await startApp();
   });
   describe('[POST] when creating a tournament', () => {
-
     // Vérifier ID tournoi
     it('should return the correct id', async () => {
       const { body } = await request(app.getHttpServer())
@@ -92,30 +91,69 @@ describe('/tournament endpoint', () => {
 
     // Vérifier nb participants max
     it('should return the correct number of max allowed participants', async () => {
-      // On envoi le tournoi...
       const { body } = await request(app.getHttpServer())
         .post('/api/tournaments')
         .send(exampleTournament)
         .expect(201);
-      // ...on le récupère
       const get = await request(app.getHttpServer())
         .get(`/api/tournaments/${body.maxParticipants}`)
         .expect(200);
-      expect(get.body.maxParticipants).toEqual(exampleTournament.maxParticipants);
+      expect(get.body.maxParticipants).toEqual(
+        exampleTournament.maxParticipants
+      );
     });
 
     // Vérifier nb participants
     it('should return the correct number of participants in the current tournament', async () => {
+      const { body } = await request(app.getHttpServer())
+        .post('/api/tournaments')
+        .send(exampleExistingTournament)
+        .expect(201);
+      const get = await request(app.getHttpServer())
+        .get(`/api/tournaments/${body.currentParticipantNb}`)
+        .expect(200);
+      expect(get.body.currentParticipantNb).toEqual(
+        exampleExistingTournament.currentParticipantNb
+      );
+    });
+
+    // Vérifier statut tournoi
+    it('should return the correct status of the current tournament', async () => {
       // On envoi le tournoi...
       const { body } = await request(app.getHttpServer())
         .post('/api/tournaments')
         .send(exampleExistingTournament)
         .expect(201);
-      // ...on le récupère
       const get = await request(app.getHttpServer())
-        .get(`/api/tournaments/${body.currentParticipantNb}`)
+        .get(`/api/tournaments/${body.status}`)
         .expect(200);
-      expect(get.body.currentParticipantNb).toEqual(exampleExistingTournament.currentParticipantNb);
+      expect(get.body.status).toEqual(exampleExistingTournament.status);
+    });
+
+    // Vérifier phases tournoi
+    it('should return the correct phase of the current tournament', async () => {
+      // On envoi le tournoi...
+      const { body } = await request(app.getHttpServer())
+        .post('/api/tournaments')
+        .send(exampleExistingTournament)
+        .expect(201);
+      const get = await request(app.getHttpServer())
+        .get(`/api/tournaments/${body.phases}`)
+        .expect(200);
+      expect(get.body.phases).toEqual(exampleExistingTournament.phases);
+    });
+
+    // Vérifier participants tournoi
+    it('should return the participants of the current tournament', async () => {
+      // On envoi le tournoi...
+      const { body } = await request(app.getHttpServer())
+        .post('/api/tournaments')
+        .send(exampleExistingTournament)
+        .expect(201);
+      const get = await request(app.getHttpServer())
+        .get(`/api/tournaments/${body.participants}`)
+        .expect(200);
+      expect(get.body.participants).toEqual(exampleExistingTournament.participants);
     });
   });
 });

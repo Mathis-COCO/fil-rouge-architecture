@@ -5,7 +5,7 @@ export enum TournamentPhaseType {
 
 export enum StatusType {
   Started = 'Started',
-  NotStarted = 'NotStarted',
+  NotStarted = 'Awaiting Start',
 }
 
 export interface TournamentPhase {

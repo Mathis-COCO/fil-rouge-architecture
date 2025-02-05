@@ -3,7 +3,7 @@ import { Tournament } from './tournament-entity';
 
 @Entity()
 export class Participant {
-  
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -15,4 +15,5 @@ export class Participant {
 
   @ManyToOne(() => Tournament, (tournament) => tournament.participants)
   tournament: Tournament;
+  
 }

@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Participant } from '../entities/participant-entity';
 import { StatusType } from '../api-model';
+import { TournamentPhase } from './tournament-phase-entity';
 
 @Entity()
 export class Tournament {
@@ -20,9 +21,10 @@ export class Tournament {
   @Column({ type: 'enum', enum: StatusType, default: StatusType.NotStarted })
   status: StatusType;
 
-  @ManyToOne(() => Participant, (participant) => participant.tournament)
+  @OneToMany(() => Participant, (participant) => participant.tournament)
   participants: Participant[];
 
-  // @OneToMany(() => TournamentPhase, (phase) => phase.tournament)
-  // phases: TournamentPhase[];
+  @OneToMany(() => TournamentPhase, (phase) => phase.tournament)
+  phases: TournamentPhase[];
+  
 }

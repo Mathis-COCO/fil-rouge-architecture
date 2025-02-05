@@ -20,37 +20,36 @@ export class TournamentController {
     if (!participant.name || participant.name.trim() === '' || !participant.elo) {
       throw new BadRequestException(`Le champ name et/ou elo est incorrect.`);
     }
+
+    // Participants existants
     const existingParticipant = this.tournamentRepository.participantExists(participant);
     if (existingParticipant) {
       throw new BadRequestException(`Le participant ${participant.name} existe déjà.`);
     }
 
+    // Création du tournoi
     const tournament = this.tournamentRepository.getTournament(tournamentId);
     if (!tournament) {
       throw new BadRequestException(`Tournament with ID ${tournamentId} not found.`);
     }
-
-    console.log(tournament.participants.length)
-    console.log(tournament.maxParticipants)
     if (tournament.participants.length === tournament.maxParticipants) {
       throw new BadRequestException(`Le tournoi est complet.`);
     }
-    tournament.participants = tournament.participants || [];
+
+    tournament.participants = tournament.participants || []; // ??
     tournament.participants.push(participant);
     tournament.currentParticipantNb = tournament.participants.length;
     this.tournamentRepository.saveTournament(tournament);
-
     return { id: tournament.id };
   }
 
   @Post(':id/phases')
-  public createPhase(@Param('id') id: string, @Body() phase: TournamentPhase): {
-    id: string;
-  } {
+  public createPhase(@Param('id') id: string, @Body() phase: TournamentPhase): { id: string; } {
+    const tournament = this.tournamentRepository.getTournament(id);
+
     if (!phase) {
       throw new BadRequestException(`La phase n'a pas été renseignée.`);
     }
-    const tournament = this.tournamentRepository.getTournament(id);
     if (!tournament) {
       throw new BadRequestException(`Tournoi avec l'id ${id} inexistant.`);
     }
@@ -62,11 +61,10 @@ export class TournamentController {
         throw new BadRequestException(`La phase SingleBracketElimination existe déjà et elle est finale.`);
       }
     }
-     
-    tournament.phases = tournament.phases || [];
+    
+    tournament.phases = tournament.phases || []; // ??
     tournament.phases.push(phase);
     this.tournamentRepository.saveTournament(tournament);
-
     return { id: tournament.id };
   }
 
@@ -81,12 +79,11 @@ export class TournamentController {
 
   @Get(':id/participants')
   public getTournamentParticipants(@Param('id') id: string): Participant[] {
-
     const tournament = this.tournamentRepository.getTournament(id);
+
     if (!tournament) {
       throw new BadRequestException(`Tournament with ID ${id} not found.`);
     }
-
     if (!this.tournamentRepository.getTournament(id)) {
       throw new BadRequestException("Le tournoi n'existe pas");
     } else {
@@ -94,6 +91,7 @@ export class TournamentController {
     }
   }
 
+  // Démarrage d'un tournoi
   @Patch(':id')
   public startTournament(@Param('id') id: string, @Body() body: { status: StatusType }) {
     const tournament = this.getTournament(id);
@@ -101,9 +99,9 @@ export class TournamentController {
     this.tournamentRepository.saveTournament(tournament);
   }
 
+  // Suppression des participants d'un tournoi
   @Delete(':id/participants/:participantId')
-  public deleteTournamentParticipant(@Param('id') id: string, @Param('participantId') participantId: string)
-  {
+  public deleteTournamentParticipant(@Param('id') id: string, @Param('participantId') participantId: string) {
     this.tournamentRepository.deleteParticipantFromTournament(id, participantId);
   }
 }

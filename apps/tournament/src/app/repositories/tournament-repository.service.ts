@@ -5,10 +5,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class TournamentRepositoryService {
+  // Constructeur
   constructor(private participantRepository: ParticipantRepositoryService) {}
   
+  // Liste des tournois
   private tournaments = new Map<string, Tournament>();
 
+  // Ajout d'un tournoi
   addTournament(tournamentToAdd: TournamentToAdd): Tournament {
     if (!tournamentToAdd.name || tournamentToAdd.name.trim() === '') {
       throw new BadRequestException(`Le champ nom n'a pas été renseigné.`);
@@ -31,14 +34,17 @@ export class TournamentRepositoryService {
     return tournament;
   }
 
+  // Enregistrement d'un tournoi
   public saveTournament(tournament: Tournament): void {
     this.tournaments.set(tournament.id, tournament);
   }
 
+  // Récupération d'un tournoi par son ID
   public getTournament(tournamentId: string): Tournament {
     return this.tournaments.get(tournamentId);
   }
 
+  // Récupération d'un tournoi par son nom
   public getTournamentByName(name: string): Tournament | undefined {
     for (const tournament of this.tournaments.values()) { 
       if (tournament.name.toLowerCase() === name.toLowerCase()) { 
@@ -48,17 +54,22 @@ export class TournamentRepositoryService {
     return undefined;
   }
 
+  // Récupération des participants d'un tournoi par son ID
   public getTournamentParticipants(tournamentId: string): Participant[] {
     const tournament = this.getTournament(tournamentId);
     return tournament.participants;
   }
 
+  // Suppression des participants d'un tournoi
   public deleteParticipantFromTournament(tournamentId: string, participantId: string) {
     const tournament = this.getTournament(tournamentId);
-    tournament.participants = tournament.participants.filter(participant => participant === this.participantRepository.getParticipantById(participantId));
+    tournament.participants = tournament.participants.filter(
+      participant => participant === this.participantRepository.getParticipantById(participantId)
+    );
     this.saveTournament(tournament);
   }
   
+  // Vérifie que le participant passé en paramètre existe dans le tournoi donné
   public participantExists(participant: Participant): boolean {
     for (const tournament of this.tournaments.values()) {
       for (const currentParticipant of tournament.participants) {
@@ -69,6 +80,5 @@ export class TournamentRepositoryService {
     }
     return false;
   }
-
 
 }

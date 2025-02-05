@@ -10,12 +10,12 @@ export class ParticipantRepositoryService {
       this.participants.set(participant.name, participant);
     }
 
-  // Récupère le tournoi par son ID
+  // Récupère le participant par son ID
   public getParticipantById(participantId: string): Participant {
     return this.participants.get(participantId);
   }
 
-  // Récupère le tournoi par nom
+  // Récupère le participant par nom
   public getParticipantByName(name: string): Participant | undefined {
     for (const participant of this.participants.values()) {
       if (participant.name.toLowerCase() === name.toLowerCase()) {

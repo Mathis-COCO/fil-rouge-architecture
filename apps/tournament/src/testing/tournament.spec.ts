@@ -67,7 +67,7 @@ describe('/tournament endpoint', () => {
   beforeAll(async () => {
     app = await startApp();
   });
-  describe('[POST] when creating a tournament', () => {
+  describe('[POST] when creating a tournament', () => { // virer ou généraliser description test (TBD)
     // Vérifier ID tournoi
     it('should return the correct id', async () => {
       const { body } = await request(app.getHttpServer())

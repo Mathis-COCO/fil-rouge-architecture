@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
 import { Participant, StatusType, Tournament, TournamentPhase, TournamentPhaseType, TournamentToAdd } from '../../api-model';
 import { TournamentRepositoryService } from '../../repositories/tournament-repository.service';
 
@@ -51,7 +51,7 @@ export class TournamentController {
       throw new BadRequestException(`La phase n'a pas été renseignée.`);
     }
     if (!tournament) {
-      throw new BadRequestException(`Tournoi avec l'id ${id} inexistant.`);
+      throw new NotFoundException(`Tournoi avec l'id ${id} inexistant.`);
     }
     if (!(phase.type in TournamentPhaseType)) {
       throw new BadRequestException(`Type de phase invalide.`);
@@ -71,7 +71,7 @@ export class TournamentController {
   @Get(':id')
   public getTournament(@Param('id') id: string): Tournament {
     if (!this.tournamentRepository.getTournament(id)) {
-      throw new BadRequestException("Le tournoi n'existe pas");
+      throw new NotFoundException("Le tournoi n'existe pas");
     } else {
       return this.tournamentRepository.getTournament(id);
     }
@@ -80,12 +80,8 @@ export class TournamentController {
   @Get(':id/participants')
   public getTournamentParticipants(@Param('id') id: string): Participant[] {
     const tournament = this.tournamentRepository.getTournament(id);
-
     if (!tournament) {
-      throw new BadRequestException(`Tournament with ID ${id} not found.`);
-    }
-    if (!this.tournamentRepository.getTournament(id)) {
-      throw new BadRequestException("Le tournoi n'existe pas");
+      throw new NotFoundException("Le tournoi n'existe pas");
     } else {
       return this.tournamentRepository.getTournamentParticipants(id);
     }

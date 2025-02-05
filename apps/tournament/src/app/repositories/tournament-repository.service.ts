@@ -10,7 +10,6 @@ export class TournamentRepositoryService {
   private tournaments = new Map<string, Tournament>();
 
   addTournament(tournamentToAdd: TournamentToAdd): Tournament {
-    
     if (!tournamentToAdd.name || tournamentToAdd.name.trim() === '') {
       throw new BadRequestException(`Le champ nom n'a pas été renseigné.`);
     }
@@ -29,7 +28,6 @@ export class TournamentRepositoryService {
       participants: [],
     };
     this.saveTournament(tournament);
-
     return tournament;
   }
 

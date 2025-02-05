@@ -21,13 +21,13 @@ export class TournamentController {
       throw new BadRequestException(`Le champ name et/ou elo est incorrect.`);
     }
 
-    // Participants existants
+    // Participants existants (check doublons)
     const existingParticipant = this.tournamentRepository.participantExists(participant);
     if (existingParticipant) {
       throw new BadRequestException(`Le participant ${participant.name} existe déjà.`);
     }
 
-    // Création du tournoi
+    // Récupération du tournoi
     const tournament = this.tournamentRepository.getTournament(tournamentId);
     if (!tournament) {
       throw new BadRequestException(`Tournament with ID ${tournamentId} not found.`);
@@ -36,7 +36,7 @@ export class TournamentController {
       throw new BadRequestException(`Le tournoi est complet.`);
     }
 
-    tournament.participants = tournament.participants || []; // ??
+    tournament.participants = tournament.participants || [];
     tournament.participants.push(participant);
     tournament.currentParticipantNb = tournament.participants.length;
     this.tournamentRepository.saveTournament(tournament);
@@ -62,7 +62,7 @@ export class TournamentController {
       }
     }
     
-    tournament.phases = tournament.phases || []; // ??
+    tournament.phases = tournament.phases || [];
     tournament.phases.push(phase);
     this.tournamentRepository.saveTournament(tournament);
     return { id: tournament.id };

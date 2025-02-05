@@ -25,5 +25,5 @@ export class ParticipantRepositoryService {
     return undefined;
   }
 
-  // TODO
+  // TODO: refacto méthodes dans tournament-repo ? 
 }

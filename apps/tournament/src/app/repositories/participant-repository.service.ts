@@ -1,14 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Participant } from '../entities/participant-entity';
 
 @Injectable()
 export class ParticipantRepositoryService {
-  
-  constructor(@InjectRepository(Participant)
-    private participantRepository: Repository<Participant>
-  ) {}
 
   // Liste des participants
   private participants = new Map<string, Participant>();

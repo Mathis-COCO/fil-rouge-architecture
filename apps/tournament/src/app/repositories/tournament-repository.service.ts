@@ -1,15 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Participant, StatusType, Tournament, TournamentToAdd } from '../api-model';
+import { StatusType, TournamentToAdd } from '../api-model';
 import { v4 as uuidv4 } from 'uuid';
 import { Tournament } from '../entities/tournament-entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Participant } from '../entities/participant-entity';
+import { ParticipantRepositoryService } from './participant-repository.service';
 
 @Injectable()
 export class TournamentRepositoryService {
 
-  constructor(@InjectRepository(Tournament)
-      private tournamentRepository: Repository<Tournament>
-  ) { }
+  constructor(private participantRepository: ParticipantRepositoryService) { }
   
   // Liste des tournois
   private tournaments = new Map<string, Tournament>();
@@ -71,9 +70,7 @@ export class TournamentRepositoryService {
   ) {
     const tournament = this.getTournament(tournamentId);
     tournament.participants = tournament.participants.filter(
-      (participant) =>
-        participant ===
-        this.getParticipantById(participantId)
+      (participant) => participant === this.participantRepository.getParticipantById(participantId)
     );
     this.saveTournament(tournament);
   }
@@ -89,5 +86,4 @@ export class TournamentRepositoryService {
     }
     return false;
   }
-
 }

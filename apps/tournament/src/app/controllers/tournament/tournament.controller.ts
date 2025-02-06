@@ -1,18 +1,19 @@
 import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
-import { Participant, StatusType, Tournament, TournamentPhase, TournamentPhaseType, TournamentToAdd } from '../../api-model';
+import { StatusType, TournamentPhaseType, TournamentToAdd } from '../../api-model';
+import { Participant } from '../../entities/participant-entity';
+import { Tournament } from '../../entities/tournament-entity';
+import { TournamentPhase } from '../../entities/tournament-phase-entity';
 import { TournamentRepositoryService } from '../../repositories/tournament-repository.service';
 
 @Controller('tournaments')
 export class TournamentController {
-  
+
   constructor(private tournamentRepository: TournamentRepositoryService) { }
 
+  // Création d'un tournoi
   @Post()
-  public createTournament(@Body() tournamentToAdd: TournamentToAdd): {
-    id: string;
-  } {
-    const createdTournament =
-      this.tournamentRepository.addTournament(tournamentToAdd);
+  public createTournament(@Body() tournamentToAdd: TournamentToAdd): { id: string; } {
+    const createdTournament = this.tournamentRepository.addTournament(tournamentToAdd);
     return { id: createdTournament.id };
   }
 

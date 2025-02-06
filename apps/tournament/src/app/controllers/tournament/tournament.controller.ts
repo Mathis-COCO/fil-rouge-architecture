@@ -1,6 +1,9 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
-import { Participant, StatusType, Tournament, TournamentPhase, TournamentPhaseType, TournamentToAdd } from '../../api-model';
-import { TournamentRepositoryService } from '../../repositories/tournament-repository.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { TournamentRepositoryService } from '../../repositories/tournament/tournament-repository.service';
+import { Participant } from '../../models/Participant';
+import { StatusType } from '../../models/Status';
+import { TournamentToAdd, Tournament } from '../../models/Tournament';
+import { TournamentPhase } from '../../models/TournamentPhase';
 
 @Controller('tournaments')
 export class TournamentController {
@@ -8,8 +11,7 @@ export class TournamentController {
 
   @Post()
   public createTournament(@Body() tournamentToAdd: TournamentToAdd): { id: string; } {
-    const createdTournament = this.tournamentRepository.addTournament(tournamentToAdd)
-    return { id: createdTournament.id };
+    return { id: this.tournamentRepository.addTournament(tournamentToAdd).id };
 
   }
 
@@ -17,74 +19,22 @@ export class TournamentController {
   public addParticipantToTournament( @Param('id') tournamentId: string,
                                      @Body() participant: Participant
                                     ): { id: string } {
-    if (!participant.name || participant.name.trim() === '' || !participant.elo) {
-      throw new BadRequestException(`Le champ name et/ou elo est incorrect.`);
-    }
-
-    // Participants existants (check doublons)
-    const existingParticipant = this.tournamentRepository.participantExists(participant);
-    if (existingParticipant) {
-      throw new BadRequestException(`Le participant ${participant.name} existe déjà.`);
-    }
-
-    // Récupération du tournoi
-    const tournament = this.tournamentRepository.getTournament(tournamentId);
-    if (!tournament) {
-      throw new BadRequestException(`Tournament with ID ${tournamentId} not found.`);
-    }
-    if (tournament.participants.length === tournament.maxParticipants) {
-      throw new BadRequestException(`Le tournoi est complet.`);
-    }
-
-    tournament.participants = tournament.participants || [];
-    tournament.participants.push(participant);
-    tournament.currentParticipantNb = tournament.participants.length;
-    this.tournamentRepository.saveTournament(tournament);
-    return { id: tournament.id };
+    return { id: this.tournamentRepository.addParticipantToTournament(tournamentId, participant) };
   }
 
   @Post(':id/phases')
   public createPhase(@Param('id') id: string, @Body() phase: TournamentPhase): { id: string; } {
-    const tournament = this.tournamentRepository.getTournament(id);
-
-    if (!phase) {
-      throw new BadRequestException(`La phase n'a pas été renseignée.`);
-    }
-    if (!tournament) {
-      throw new NotFoundException(`Tournoi avec l'id ${id} inexistant.`);
-    }
-    if (!(phase.type in TournamentPhaseType)) {
-      throw new BadRequestException(`Type de phase invalide.`);
-    }
-    for(const currentPhase of tournament.phases) {
-      if (currentPhase.type === "SingleBracketElimination") {
-        throw new BadRequestException(`La phase SingleBracketElimination existe déjà et elle est finale.`);
-      }
-    }
-    
-    tournament.phases = tournament.phases || [];
-    tournament.phases.push(phase);
-    this.tournamentRepository.saveTournament(tournament);
-    return { id: tournament.id };
+    return { id: this.tournamentRepository.addPhaseToTournament(phase, id) };
   }
 
   @Get(':id')
   public getTournament(@Param('id') id: string): Tournament {
-    if (!this.tournamentRepository.getTournament(id)) {
-      throw new NotFoundException("Le tournoi n'existe pas");
-    } else {
-      return this.tournamentRepository.getTournament(id);
-    }
+    return this.tournamentRepository.getTournamentById(id);
   }
 
   @Get(':id/participants')
   public getTournamentParticipants(@Param('id') id: string): Participant[] {
-    const tournament = this.tournamentRepository.getTournament(id);
-    if (!tournament) {
-      throw new NotFoundException("Le tournoi n'existe pas");
-    } else {
-      return this.tournamentRepository.getTournamentParticipants(id);
-    }
+    return this.tournamentRepository.getTournamentParticipants(id);
   }
 
   // Démarrage d'un tournoi

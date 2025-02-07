@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Participant } from '../entities/participant.entity';
-import { StatusType } from '../models/Status'; 
+import { StatusType } from '../models/StatusType'; 
 import { TournamentPhase } from '../entities/tournamentPhase.entity';
 
 @Entity()

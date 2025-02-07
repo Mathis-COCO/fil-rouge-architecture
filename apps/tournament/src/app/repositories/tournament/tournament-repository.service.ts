@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { ParticipantRepositoryService } from '../participant/participant-repository.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Participant } from '../../models/Participant';
-import { StatusType } from '../../models/Status';
+import { StatusType } from '../../models/StatusType';
 import { Tournament } from '../../models/Tournament';
 import { TournamentToAdd } from '../../models/TournamentToAdd';
 import { TournamentPhase, TournamentPhaseType } from '../../models/TournamentPhase';
@@ -91,6 +91,7 @@ export class TournamentRepositoryService {
     return false;
   }
 
+  // Ajoute des participants au tournoi
   public addParticipantToTournament(tournamentId: string, participant: Participant): string {
     if (!participant.name || participant.name.trim() === '' || !participant.elo) {
       throw new BadRequestException(`Le champ name et/ou elo est incorrect.`);
@@ -115,6 +116,7 @@ export class TournamentRepositoryService {
     return tournament.id;
   }
 
+  // Ajoute des phases au tournoi
   public addPhaseToTournament(phase: TournamentPhase, id: string): string {
     const tournament = this.getTournamentById(id);
     if (!phase) {
@@ -129,6 +131,7 @@ export class TournamentRepositoryService {
     for(const currentPhase of tournament.phases) {
       if (currentPhase.type === "SingleBracketElimination") {
         throw new BadRequestException(`La phase SingleBracketElimination existe déjà et elle est finale.`);
+        // TODO: feature #11 ?
       }
     }
     tournament.phases = tournament.phases || [];
@@ -136,4 +139,49 @@ export class TournamentRepositoryService {
     this.saveTournament(tournament);
     return tournament.id
   }
+
+  // Gestion des matches en élimination directe (copilot)
+  public generateSingleEliminationBracket(tournament: Tournament): TournamentPhase {
+    const participants = [...tournament.participants].sort((a, b) => b.elo - a.elo);
+    const numParticipants = participants.length;
+    const numSeeds = Math.pow(2, Math.floor(Math.log2(numParticipants / 4)));
+    const seeds = participants.slice(0, numSeeds);
+    const nonSeeds = participants.slice(numSeeds);
+    const rounds = [];
+    let currentRound = [];
+    let matchIndex = 0;
+
+    // Place seeds in the bracket
+    for (let i = 0; i < numSeeds; i++) {
+      const match = { p1: seeds[i], p2: null, status: 'NotPlayable', winner: null };
+      currentRound.push(match);
+      if (currentRound.length === Math.pow(2, matchIndex)) {
+        rounds.push({ matches: currentRound });
+        currentRound = [];
+        matchIndex++;
+      }
+    }
+
+    // Place non-seeds randomly
+    while (nonSeeds.length > 0) {
+      const match = currentRound.pop();
+      match.p2 = nonSeeds.pop();
+      match.status = 'Playable';
+      currentRound.push(match);
+      if (currentRound.length === Math.pow(2, matchIndex)) {
+        rounds.push({ matches: currentRound });
+        currentRound = [];
+        matchIndex++;
+      }
+    }
+
+    // Create the phase
+    const phase: TournamentPhase = {
+      type: TournamentPhaseType.SingleBracketElimination,
+      status: 'Started',
+      rounds: rounds
+    };
+    return phase;
+  }
+
 }

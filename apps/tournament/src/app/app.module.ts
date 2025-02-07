@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PingController } from './controllers/ping/ping.controller';
-import { TournamentController } from './controllers/tournament/tournament.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { TournamentRepositoryService } from './repositories/tournament/tournament-repository.service';
 import { ParticipantRepositoryService } from './repositories/participant/participant-repository.service';
+import { PingController } from './controllers/ping/ping.controller';
+import { TournamentController } from './controllers/tournament/tournament.controller';
 import { ParticipantController } from './controllers/participant/participant.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { Participant } from './entities/participant.entity';
 import { TournamentPhase } from './entities/tournamentPhase.entity';

@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { startApp } from './test.utils';
 import request from 'supertest';
-import { Participant } from '../app/models/Participant';
-import { TournamentToAdd } from '../app/models/Tournament';
+import { Participant } from '../app/entities/participant.entity';
+import { TournamentToAdd } from '../app/models/TournamentToAdd';
 
 // ---------- CAS DE TESTS ---------- //
 

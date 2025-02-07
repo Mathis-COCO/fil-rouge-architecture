@@ -1,3 +1,4 @@
+
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ParticipantRepositoryService } from '../participant/participant-repository.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,7 +24,6 @@ export class TournamentRepositoryService {
     if (existingTournament) {
       throw new BadRequestException(`Tournoi ${tournamentToAdd.name} déjà existant.`);
     }
-
     const tournament: Tournament = {
       id: uuidv4(),
       name: tournamentToAdd.name,
@@ -94,13 +94,11 @@ export class TournamentRepositoryService {
     if (!participant.name || participant.name.trim() === '' || !participant.elo) {
       throw new BadRequestException(`Le champ name et/ou elo est incorrect.`);
     }
-
     // Participants existants (check doublons)
     const existingParticipant = this.participantExists(participant);
     if (existingParticipant) {
       throw new BadRequestException(`Le participant ${participant.name} existe déjà.`);
     }
-
     // Récupération du tournoi
     const tournament = this.getTournamentById(tournamentId);
     if (!tournament) {
@@ -109,7 +107,6 @@ export class TournamentRepositoryService {
     if (tournament.participants.length === tournament.maxParticipants) {
       throw new BadRequestException(`Le tournoi est complet.`);
     }
-
     tournament.participants = tournament.participants || [];
     tournament.participants.push(participant);
     tournament.currentParticipantNb = tournament.participants.length;
@@ -118,9 +115,7 @@ export class TournamentRepositoryService {
   }
 
   public addPhaseToTournament(phase: TournamentPhase, id: string): string {
-    
     const tournament = this.getTournamentById(id);
-
     if (!phase) {
       throw new BadRequestException(`La phase n'a pas été renseignée.`);
     }
@@ -135,7 +130,6 @@ export class TournamentRepositoryService {
         throw new BadRequestException(`La phase SingleBracketElimination existe déjà et elle est finale.`);
       }
     }
-    
     tournament.phases = tournament.phases || [];
     tournament.phases.push(phase);
     this.saveTournament(tournament);

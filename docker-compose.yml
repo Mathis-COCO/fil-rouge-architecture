@@ -1,15 +1,15 @@
-# Mise en place docker (test)
+# Mise en place container docker postgre
 version: '3.7'
 services:
   postgres:
     image: postgres:13
-    container_name: postgres_db
+    container_name: tournament_postgres
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_DB: poll_db
-      POSTGRES_USER: poll_user
-      POSTGRES_PASSWORD: poll_password
+      POSTGRES_DB: tournament_db
+      POSTGRES_USER: tournament_user
+      POSTGRES_PASSWORD: tournament_password
     volumes:
       - postgres_data:/var/lib/postgresql/data
 volumes:

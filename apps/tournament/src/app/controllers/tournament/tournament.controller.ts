@@ -2,7 +2,8 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { TournamentRepositoryService } from '../../repositories/tournament/tournament-repository.service';
 import { Participant } from '../../models/Participant';
 import { StatusType } from '../../models/Status';
-import { TournamentToAdd, Tournament } from '../../models/Tournament';
+import { Tournament } from '../../models/Tournament';
+import { TournamentToAdd } from '../../models/TournamentToAdd';
 import { TournamentPhase } from '../../models/TournamentPhase';
 
 @Controller('tournaments')

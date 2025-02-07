@@ -4,7 +4,8 @@ import { ParticipantRepositoryService } from '../participant/participant-reposit
 import { v4 as uuidv4 } from 'uuid';
 import { Participant } from '../../models/Participant';
 import { StatusType } from '../../models/Status';
-import { Tournament, TournamentToAdd } from '../../models/Tournament';
+import { Tournament } from '../../models/Tournament';
+import { TournamentToAdd } from '../../models/TournamentToAdd';
 import { TournamentPhase, TournamentPhaseType } from '../../models/TournamentPhase';
 
 @Injectable()

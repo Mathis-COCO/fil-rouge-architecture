@@ -1,9 +1,13 @@
+import { Participant } from "./Participant";
+import { StatusType } from "./Status";
+import { TournamentPhase } from "./TournamentPhase";
+
 export interface Tournament {
   id: string;
   name: string;
   maxParticipants: number;
   currentParticipantNb: number;
-  status: string;
-  phases: string;
-  participants: string[];
+  status?: StatusType,
+  phases: TournamentPhase[];
+  participants: Participant[];
 }

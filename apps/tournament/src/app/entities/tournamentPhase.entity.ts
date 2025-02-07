@@ -1,4 +1,4 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 // Enum type des phases d'un tournoi
 export enum TournamentPhaseType {
@@ -16,7 +16,7 @@ export enum StatusType {
 @Entity()
 export class TournamentPhase {
 
-  @Column()
+  @PrimaryGeneratedColumn()
   type: TournamentPhaseType;
 
   @Column()

@@ -5,6 +5,9 @@ import { TournamentRepositoryService } from './repositories/tournament/tournamen
 import { ParticipantRepositoryService } from './repositories/participant/participant-repository.service';
 import { ParticipantController } from './controllers/participant/participant.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Tournament } from './entities/tournament.entity';
+import { Participant } from './entities/participant.entity';
+import { TournamentPhase } from './entities/tournamentPhase.entity';
 
 @Module({
   imports: [
@@ -12,10 +15,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      password: 'azerty',
-      username: 'postgres',
-      entities: [],
-      database: 'postgres',
+      password: 'tournament_password',
+      username: 'tournament_user',
+      entities: [Tournament, Participant, TournamentPhase],
+      database: 'tournament_db',
       synchronize: true,
       logging: true,
     }),

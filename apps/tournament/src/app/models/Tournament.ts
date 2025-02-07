@@ -1,5 +1,5 @@
 import { Participant } from "./Participant";
-import { StatusType } from "./Status";
+import { StatusType } from "./StatusType";
 import { TournamentPhase } from "./TournamentPhase";
 
 export interface Tournament {
